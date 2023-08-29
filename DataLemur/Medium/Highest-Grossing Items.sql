@@ -7,7 +7,7 @@
 		5. Defining CTE or Subquery to find the top 2 highest-grossing products of each category
 		
 	Order of Execution:
-		CTE( FROM => WHERE => GROUP BY => RANK() => SELECT ) => WHERE
+		=> FROM CTE( FROM => WHERE => GROUP BY => RANK() => SELECT ) => WHERE => SELECT
 */
 WITH prod_rank AS (
 	SELECT
