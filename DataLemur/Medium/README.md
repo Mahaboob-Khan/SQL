@@ -13,5 +13,5 @@
 |transaction_date|timestamp|
 
 Question Source: [Highest-Grossing Items](https://datalemur.com/questions/sql-highest-grossing) <br />
-Solution: [Highest-Grossing Items]
+Solution: [Highest-Grossing Items](https://github.com/Mahaboob-Khan/SQL/blob/main/DataLemur/Medium/Highest-Grossing%20Items.sql)
 </details>
