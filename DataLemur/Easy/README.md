@@ -32,5 +32,34 @@
   | 4500 |	1   |
 
   Question Source: [Teams Power Users - Microsoft SQL Interview Question](https://datalemur.com/questions/teams-power-users) <br />
-  Solution: [Teams-Power-Users](https://github.com/Mahaboob-Khan/SQL/blob/main/DataLemur/Easy/Teams-Power-Users.sql) <br />
+  Solution: [Teams-Power-Users](https://github.com/Mahaboob-Khan/SQL/blob/main/DataLemur/Easy/Teams-Power-Users.sql)
+</details>
+<details>
+  <summary> Q2. Cities With Completed Trades [Robinhood SQL Interview Question] </summary>
+  Assume you're given the tables containing completed trade orders and user details in a Robinhood trading system.<br />
+  Write a query to retrieve the top three cities that have the highest number of completed trade orders listed in descending order.
+  Output the city name and the corresponding number of completed trade orders.<br /><br />
+  
+  `trades` **Table**
+  
+  | Column Name   | Type         |
+  | :------------ |:-------------|
+  | order_id    | integer |
+  | user_id     | integer |
+  | price   | decimal |
+  | quantity       | integer |
+  | status     | string('Completed' ,'Cancelled') |
+  | timestamp | datetime |
+
+  `users` **Table**
+  
+  | Column Name   | Type         |
+  | :------------ |:-------------|
+  | user_id    | integer |
+  | city     | string |
+  | email   | string |
+  | signup_date | datetime |
+
+  Question Source: [Cities With Completed Trades - Robinhood SQL Interview Question](https://datalemur.com/questions/completed-trades) <br />
+  Solution: [Cities-With-Completed-Trades](https://github.com/Mahaboob-Khan/SQL/blob/main/DataLemur/Easy/Cities-With-Completed-Trades.sql)
 </details>
