@@ -1,1 +1,171 @@
 # SQL Interview Questions
+<details>
+  <summary>Q1. Get the correct price of each chips type</summary>
+  
+  #### Problem Statement:
+  Write a query to get the listed chips in order of their amounts respectively, if there is no chips mentioned then the amount should be skipped.<br />
+    
+  #### Table Schema, Sample Input, and output
+  
+  `Chips` **Table**
+  
+  | Column Name   | Type     |
+  | :------------ |:---------|
+  | Chips         | VARCHAR  |
+  | Amt           | VARCHAR  |
+
+  **Table Creation:**
+  ```sql
+  CREATE TABLE Chips_tbl (
+    Chips VARCHAR(500),
+    Amount VARCHAR(500)
+  );
+  
+  INSERT INTO Chips_tbl(Chips, Amount) VALUES
+  ('lays1, uncle_chips1, kurkure1', '10,20,30'),
+  ('wafferrs2', '40,50'),
+  ('potatochips3, hotchips3, balaji3', '60,70,80');
+  ```
+  
+  `Chips` **Example Input:**
+  
+  | Chips    | Amt      |
+  | :--- | :--- |
+  | lays1, uncle_chips1, kurkure1 | 10,20,30 |
+  | wafferrs2 | 40,50 |
+  | potatochips3, hotchips3, balaji3 | 60,70,80 |
+
+  `Example` **Output:**
+  | Chips_List | Amt |
+  | :--- | :--- |
+  | lays1 | 10  |
+  | uncle_chips1 | 20  |
+  | kurkure1 |  30 |
+  | wafferrs2 | 40  |
+  | potatochips3 | 60  |
+  | hotchips3 |  70 |
+  | balaji3   |  80 |
+
+  ```sql
+  -- Split the Chips column into multiple rows by delimiter & CROSS APPLY with Main Table
+  WITH CTE_Chips AS (
+    SELECT T.Chips, C.Ordinal, TRIM(C.Value) AS Chips_List
+    FROM Chips_tbl T
+    CROSS APPLY STRING_SPLIT(Chips,',',1) C
+  ),
+  -- Split the Amount column into multiple rows by delimiter & CROSS APPLY with Main Table
+  CTE_Amt AS (
+    SELECT T.Chips, A.Ordinal, A.Value AS Amt
+    FROM Chips_tbl T
+    CROSS APPLY STRING_SPLIT(Amount,',',1) A
+  )
+  -- JOIN both the CTEs on Main Table Chips Column & Ordinal/Index of each chips to identify the price
+  SELECT Chips.Chips_List, Amt.Amt 
+  FROM CTE_Chips Chips 
+  INNER JOIN CTE_Amt Amt
+  	ON Chips.Chips = Amt.Chips 
+  	AND Chips.Ordinal = Amt.Ordinal;
+  ```
+  Solution: [Chips List](https://github.com/Mahaboob-Khan/SQL/blob/new_sql/NamasteSQL/ChipsList.sql)
+</details>
+<details>
+  <summary>Q2. Social Platform Users</summary>
+  
+#### Problem Statement:
+  Write a query to get the users who are viewers of both platforms, "*Twitch*" & "*Youtube*", and have *atleast once a minimum of 10mins watch time*.<br />
+  
+#### Table Schema, Sample Input, and output
+
+  `Platforms` **Table**
+  
+  | Column Name   | Type     |
+  | :------------ |:---------|
+  | user_id       | INT      |
+  | session_start | DATETIME |
+  | session_end   | DATETIME |
+  | platforms     | VARCHAR  |
+
+  **Table Creation:**
+
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.tbl_Platform (
+  	user_id INT NOT NULL,
+  	session_start DATETIME,
+  	session_end DATETIME,
+  	platforms VARCHAR(20)
+  );
+  
+  INSERT INTO NamasteSQL.tbl_Platform (user_id, session_start, session_end, platforms) VALUES
+  (0, '2020-08-11 05:51:31.000', '2020-08-11 05:54:45.000', 'Twitch'),
+  (0, '2020-03-11 03:01:40.000', '2020-03-11 03:01:59.000', 'Twitch'),
+  (0, '2020-08-11 03:50:45.000', '2020-08-11 03:55:59.000', 'Youtube'),
+  (1, '2020-11-19 06:24:24.000', '2020-11-19 07:24:38.000', 'Youtube'),
+  (1, '2020-11-20 06:59:57.000', '2020-11-20 07:20:11.000', 'Twitch'),
+  (2, '2020-07-11 03:36:54.000', '2020-07-11 03:37:08.000', 'OTT'),
+  (2, '2020-11-14 03:36:05.000', '2020-11-14 03:39:19.000', 'Youtube'),
+  (2, '2020-07-11 14:32:19.000', '2020-07-11 14:42:33.000', 'Youtube'),
+  (3, '2020-11-26 11:41:47.000', '2020-11-26 11:52:01.000', 'Twitch'),
+  (3, '2020-10-11 22:15:14.000', '2020-10-11 22:18:28.000', 'Youtube');
+  ```
+
+  `Platforms` **Example Input:**
+  
+  | user_id    | session_start      | session_end   | platforms        |
+  | :--- | :--- | :---| :--- |
+  | 0 | 2020-08-11 05:51:31.000 | 2020-08-11 05:54:45.000 | Twitch |
+  | 0 | 2020-03-11 03:01:40.000 | 2020-03-11 03:01:59.000 | Twitch |
+  | 0 | 2020-08-11 03:50:45.000 | 2020-08-11 03:55:59.000 | Youtube |
+  | 1 | 2020-11-19 06:24:24.000 | 2020-11-19 07:24:38.000 | Youtube |
+  | 1 | 2020-11-20 06:59:57.000 | 2020-11-20 07:20:11.000 | Twitch |
+  | 2 | 2020-07-11 03:36:54.000 | 2020-07-11 03:37:08.000 | OTT |
+  | 2 | 2020-11-14 03:36:05.000 | 2020-11-14 03:39:19.000 | Youtube |
+  | 2 | 2020-07-11 14:32:19.000 | 2020-07-11 14:42:33.000 | Youtube |
+  | 3 | 2020-11-26 11:41:47.000 | 2020-11-26 11:52:01.000 | Twitch |
+  | 3 | 2020-10-11 22:15:14.000 | 2020-10-11 22:18:28.000 | Youtube |
+
+  `Example` **Output:**
+  | user_id |
+  | :--- |
+  | 1 |
+  | 3 |
+
+  **Approach 1**
+  ```sql
+  -- Approach 1 - Using GROUP BY, CTE & INNER JOIN
+  WITH cte_users AS (
+  	-- Get the users of two platforms (Twitch & Youtube)
+  	SELECT user_id
+  	FROM NamasteSQL.tbl_Platform
+  	WHERE platforms IN ('Twitch', 'Youtube')
+  	GROUP BY user_id
+  	HAVING COUNT(DISTINCT platforms) = 2
+  ),
+  cte_duration AS (
+  	-- Get the users who have at least 10mins of watch time on either Twitch or Youtube
+  	SELECT user_id
+  	FROM NamasteSQL.tbl_Platform
+  	WHERE platforms IN ('Twitch', 'Youtube')
+  	AND DATEDIFF(MINUTE, session_start, session_end) >= 10
+  )
+  -- Final query to find the users of both platforms who have at least 10mins of watch time once
+  SELECT DISTINCT u.user_id
+  FROM cte_users u INNER JOIN cte_duration d
+  ON u.user_id = d.user_id;
+  ```
+
+  **Approach 2**
+  ```sql
+  -- Approach 2 - Using DENSE_RANK() & INNER JOIN
+  SELECT DISTINCT D.user_id
+  FROM NamasteSQL.tbl_Platform D
+  INNER JOIN (
+  	SELECT user_id, DENSE_RANK() OVER(PARTITION BY user_id ORDER BY platforms) AS drank
+  	FROM NamasteSQL.tbl_Platform
+  	WHERE platforms IN ('Twitch', 'Youtube')
+  ) U ON D.user_id = U.user_id
+  WHERE DATEDIFF(MINUTE, D.session_start, D.session_end) >= 10
+  AND u.drank = 2;
+  ```
+  Solution: [Social Platform Usage](https://github.com/Mahaboob-Khan/SQL/blob/main/NamasteSQL/Social%20Platform%20Usage/Solution.sql)  
+</details>
