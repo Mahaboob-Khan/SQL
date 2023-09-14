@@ -67,6 +67,4 @@
   FROM cte_repeat
   ORDER BY skill_id;
   ```
-
-  Solution: [Repeat Rows](https://github.com/Mahaboob-Khan/SQL/blob/new_sql/General/RepeatRows.sql)
 </details>
