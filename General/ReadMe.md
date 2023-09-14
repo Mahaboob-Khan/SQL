@@ -1,6 +1,6 @@
 # Common SQL Interview Questions
 <details>
-  <summary> Repeat Rows based on the no of characters in the skill name</summary>
+  <summary>Q1. Repeat Rows based on the no of characters in the skill name</summary>
 
   #### Problem Statement:
   Write a SQL query to repeat skill_name based on the no of characters in the skill_name.<br />
