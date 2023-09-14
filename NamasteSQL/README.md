@@ -66,7 +66,6 @@
   	ON Chips.Chips = Amt.Chips 
   	AND Chips.Ordinal = Amt.Ordinal;
   ```
-  Solution: [Chips List](https://github.com/Mahaboob-Khan/SQL/blob/new_sql/NamasteSQL/ChipsList.sql)
 </details>
 <details>
   <summary>Q2. Social Platform Users</summary>
@@ -166,6 +165,5 @@
   ) U ON D.user_id = U.user_id
   WHERE DATEDIFF(MINUTE, D.session_start, D.session_end) >= 10
   AND u.drank = 2;
-  ```
-  Solution: [Social Platform Usage](https://github.com/Mahaboob-Khan/SQL/blob/main/NamasteSQL/Social%20Platform%20Usage/Solution.sql)  
+  ``` 
 </details>
