@@ -167,3 +167,103 @@
   AND u.drank = 2;
   ``` 
 </details>
+<details>
+  <summary>Q3. Assign the Running Number and reset when Non-Null value is encountered</summary>
+  
+#### Problem Statement:
+  Write a query to get the Running number when the flag encouters a NULL & again reset it for the next subsequent follow-up when it encounters a Non-NULL value.<br />
+  
+#### Table Schema, Sample Input, and output
+
+  `Log_tbl` **Table**
+  
+  | Column Name   | Type     |
+  | :------------ |:---------|
+  | id            | INT      |
+  | date          | DATE     |
+  | flag          | INT      |
+
+  **Table Creation:**
+
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Log_tbl (
+  	id INT,
+  	date DATE,
+  	flag INT
+  );
+  
+  INSERT INTO NamasteSQL.Log_tbl (id, date, flag) VALUES
+  (1, '2019-01-01', null),
+  (1, '2019-01-02', null),
+  (1, '2019-01-03', null),
+  (1, '2019-01-04', 1),
+  (1, '2019-01-05', null),
+  (1, '2019-01-06', null),
+  (1, '2019-01-07', 1),
+  (2, '2019-01-02', 1),
+  (2, '2019-01-03', null),
+  (2, '2019-01-04', 1),
+  (2, '2019-01-05', null),
+  (2, '2019-01-06', null);
+  ```
+
+  `Log_tbl` **Example Input:**
+  | id    | date      | flag   |
+  | :--- | :--- | :--- |
+  |1 | 2019-01-01 | null |
+  |1 | 2019-01-02 | null |
+  |1 | 2019-01-03 | null |
+  |1 | 2019-01-04 | 1 |
+  |1 | 2019-01-05 | null |
+  |1 | 2019-01-06 | null |
+  |1 | 2019-01-07 | 1 |
+  |2 | 2019-01-02 | 1 |
+  |2 | 2019-01-03 | null |
+  |2 | 2019-01-04 | 1 |
+  |2 | 2019-01-05 | null |
+  |2 | 2019-01-06 | null |
+
+  `Log_tbl` **Output:**
+  | id   | date | flag | running_num |
+  | :--- | :--- | :--- | :--- |
+  |1 | 2019-01-01 | null | 1 |
+  |1 | 2019-01-02 | null | 2 |
+  |1 | 2019-01-03 | null | 3 |
+  |1 | 2019-01-04 | 1 | null |
+  |1 | 2019-01-05 | null | 1 |
+  |1 | 2019-01-06 | null | 2 |
+  |1 | 2019-01-07 | 1 | null |
+  |2 | 2019-01-02 | 1 | null |
+  |2 | 2019-01-03 | null | 1 |
+  |2 | 2019-01-04 | 1 | null |
+  |2 | 2019-01-05 | null | 1 |
+  |2 | 2019-01-06 | null | 2 |
+
+  **Solution**
+  ```sql
+	-- Assigning the row number for each record, and row number order by date for partitions (with & without flag value NULL)
+	-- Perform rnum1 - rnum2 to get the different value assigned to each group of NULL records and add new row number to get running number
+	WITH cte_data AS (
+		SELECT 
+			 id
+			,date
+			,flag
+			,ROW_NUMBER() OVER(ORDER BY date, id) AS rnum1
+			,ROW_NUMBER() OVER(PARTITION BY id, (CASE WHEN flag IS NULL THEN 1 ELSE 0 END) ORDER BY date) AS rnum2
+		FROM NamasteSQL.Log_tbl
+	)
+
+	SELECT 
+		 id
+		,date
+		,flag
+		,CASE
+			WHEN flag IS NULL THEN
+	  			ROW_NUMBER() OVER(PARTITION BY id, rnum1-rnum2 ORDER BY id, date)
+			ELSE NULL
+		 END AS running_num
+	FROM cte_data
+	ORDER BY id, date;
+  ```
+</details>
