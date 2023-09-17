@@ -171,7 +171,7 @@
   <summary>Q3. Assign the Running Number and reset when Non-Null value is encountered</summary>
   
 #### Problem Statement:
-  Write a query to get the Running number when the flag encouters a NULL & again reset it for the next subsequent follow-up when it encounters a Non-NULL value.<br />
+  Write a query to get the Running number when the flag encounters a NULL & again reset it for the next subsequent follow-up when it encounters a Non-NULL value.<br />
   
 #### Table Schema, Sample Input, and output
 
@@ -266,4 +266,109 @@
 	FROM cte_data
 	ORDER BY id, date;
   ```
+</details>
+<details>
+  <summary>Q4. Swimmers who only won gold medals</summary>
+  
+#### Problem Statement:
+  Write a query to find the *no of gold medals per swimmer for swimmer who ONLY won gold medals*.<br />
+  
+#### Table Schema, Sample Input, and output
+
+  `Players` **Table**
+  
+  | Column Name   | Type     |
+  | :------------ |:---------|
+  | id     | INT      |
+  | event  | VARCHAR  |
+  | year   | SMALLINT |
+  | gold   | VARCHAR  |
+  | silver | VARCHAR  |
+  | bronze | VARCHAR  |
+
+  **Table Creation:**
+
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Players(
+	id INT,
+	event VARCHAR(200),
+	year SMALLINT,
+	gold VARCHAR(25),
+	silver VARCHAR(25),
+	bronze VARCHAR(25)
+  );
+  
+  INSERT INTO NamasteSQL.Players(id, event, year, gold, silver, bronze) VALUES
+  (1, '100m', '2016', 'Amthhew', 'Donald', 'Barbara'),
+  (2, '200m', '2016', 'Nichole', 'Alvaro', 'janet'),
+  (3, '500m', '2016', 'Charles', 'Nichole', 'Susana'),
+  (4, '100m', '2016', 'Ronald', 'maria', 'paula'),
+  (5, '200m', '2016', 'Alfred', 'carol', 'Steven'),
+  (6, '500m', '2016', 'Nichole', 'Alfred', 'Brandon'),
+  (7, '100m', '2016', 'Charles', 'Dennis', 'Susana'),
+  (8, '200m', '2016', 'Thomas', 'Dawn', 'catherine'),
+  (9, '500m', '2016', 'Thomas', 'Dennins', 'paula'),
+  (10, '100m', '2016', 'Charles', 'Dennis', 'Susana'),
+  (11, '200m', '2016', 'jessica', 'Donald', 'Stefeney'),
+  (12, '500m', '2016', 'Thomas', 'Steven', 'Catherine');
+  ```
+
+  `Players` **Example Input:**
+  
+  | id    | event  | year  | gold  |  silver  |  bronze |
+  | :---  | :---   | :---  | :---  | :---     | :---    |
+  |1 | 100m | 2016 | Amthhew | Donald | Barbara |
+  |2 | 200m | 2016 | Nichole | Alvaro | janet |
+  |3 | 500m | 2016 | Charles | Nichole | Susana |
+  |4 | 100m | 2016 | Ronald | maria | paula |
+  |5 | 200m | 2016 | Alfred | carol | Steven |
+  |6 | 500m | 2016 | Nichole | Alfred | Brandon |
+  |7 | 100m | 2016 | Charles | Dennis | Susana |
+  |8 | 200m | 2016 | Thomas | Dawn | catherine |
+  |9 | 500m | 2016 | Thomas | Dennins | paula |
+  |10 | 100m | 2016 | Charles | Dennis | Susana |
+  |11 | 200m | 2016 | jessica | Donald | Stefeney |
+  |12 | 500m | 2016 | Thomas | Steven | Catherine |
+
+  `Example` **Output:**
+  | player | no_of_gold |
+  | :---   | :---       |
+  | Amthhew | 1 |
+  | Charles | 3 |
+  | jessica | 1 |
+  | Ronald  | 1 |
+  | Thomas  | 3 |
+
+  **Approach 1**
+  ```sql
+  -- Using LEFT JOIN & GROUP BY
+  SELECT g.gold AS name, COUNT(*) AS no_of_gold
+  FROM NamasteSQL.Players g
+  LEFT JOIN NamasteSQL.Players s
+    ON LOWER(g.gold) = LOWER(s.silver)
+  LEFT JOIN NamasteSQL.Players b
+    ON LOWER(g.gold) = LOWER(b.bronze)
+  WHERE s.silver IS NULL AND b.bronze IS NULL
+  GROUP BY g.gold;
+  ```
+
+  **Approach 2**
+  ```sql
+  -- Using UNION ALL & CTE
+  WITH silver_bronze_players AS (
+	SELECT DISTINCT silver AS name
+	FROM NamasteSQL.Players
+	UNION ALL
+	SELECT DISTINCT bronze AS name
+	FROM NamasteSQL.Players
+  )
+  SELECT gold AS player, COUNT(*) AS no_of_gold
+  FROM NamasteSQL.Players
+  WHERE LOWER(gold) NOT IN (
+	SELECT LOWER(name)
+	FROM silver_bronze_players
+  )
+  GROUP BY gold;
+  ``` 
 </details>
