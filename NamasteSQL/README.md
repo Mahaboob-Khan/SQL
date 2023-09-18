@@ -372,3 +372,93 @@
   GROUP BY gold;
   ``` 
 </details>
+<details>
+  <summary>Q5. Find 3 or more consecutive empty seats</summary>
+  
+#### Problem Statement:
+  Write a query to get the *list of 3 or more Consecutive empty seats*.<br />
+  
+#### Table Schema, Sample Input, and output
+
+  `Seats` **Table**
+  
+  | Column Name | Type   |
+  | :-------- |:-------  |
+  | seat_no   | SMALLINT |
+  | is_empty  | CHAR     |
+
+  **Table Creation:**
+
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Seats
+	seat_no SMALLINT,
+	is_empty CHAR(1)
+  );
+  
+  INSERT INTO NamasteSQL.Seats(seat_no, is_empty) VALUES
+  (1, 'N'),
+  (2, 'Y'),
+  (3, 'N'),
+  (4, 'Y'),
+  (5, 'Y'),
+  (6, 'Y'),
+  (7, 'N'),
+  (8, 'Y'),
+  (9, 'Y'),
+  (10, 'Y'),
+  (11, 'Y'),
+  (12, 'N')
+  (13, 'Y')
+  (14, 'Y');
+  ```
+
+  `Players` **Sample Input:**  
+  | seat_no | is_empty |
+  | :---    | :---     |
+  |1 | N |
+  |2 | Y |
+  |3 | N |
+  |4 | Y |
+  |5 | Y |
+  |6 | Y |
+  |7 | N |
+  |8 | Y |
+  |9 | Y |
+  |10 | Y |
+  |11 | Y |
+  |12 | N |
+  |13 | Y |
+  |14 | Y |
+
+  **Sample Output:**
+  | seat_no | is_empty |
+  | :---    | :---     |
+  |4 | Y |
+  |5 | Y |
+  |6 | Y |
+  |8 | Y |
+  |9 | Y |
+  |10 | Y |
+  |11 | Y |
+
+  **Solution**
+  ```sql
+  WITH empty_seats AS (
+	SELECT seat_no, is_empty,
+	seat_no - ROW_NUMBER() 
+	OVER(ORDER BY seat_no) AS diff
+	FROM seats
+	WHERE is_empty='Y'
+  )
+
+  SELECT seat_no, is_empty
+  FROM empty_seats empty
+  INNER JOIN (
+	SELECT diff
+	FROM empty_seats
+	GROUP BY diff
+	HAVING COUNT(*) >= 3 ) empty3
+  ON empty.diff = empty3.diff;
+  ```
+</details>
