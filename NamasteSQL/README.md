@@ -448,7 +448,7 @@
 	SELECT seat_no, is_empty,
 	seat_no - ROW_NUMBER() 
 	OVER(ORDER BY seat_no) AS diff
-	FROM seats
+	FROM NamasteSQL.Seats
 	WHERE is_empty='Y'
   )
 
