@@ -1,7 +1,6 @@
 WITH empty_seats AS (
-	SELECT seat_no, is_empty,
-	seat_no - ROW_NUMBER() 
-	OVER(ORDER BY seat_no) AS diff
+	SELECT  seat_no, is_empty,
+			seat_no - ROW_NUMBER() OVER(ORDER BY seat_no) AS diff
 	FROM NamasteSQL.Seats
 	WHERE is_empty='Y'
 )
