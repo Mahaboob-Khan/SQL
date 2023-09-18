@@ -413,7 +413,7 @@
   (14, 'Y');
   ```
 
-  `Players` **Sample Input:**  
+  `Seats` **Sample Input:**  
   | seat_no | is_empty |
   | :---    | :---     |
   |1 | N |
@@ -463,5 +463,115 @@
 	GROUP BY diff
 	HAVING COUNT(*) >= 3 ) empty3
   ON empty.diff = empty3.diff;
+  ```
+</details>
+<details>
+  <summary>Q6. Employees who were only promoted & never demoted</summary>
+  
+#### Problem Statement:
+  Write a query to print only those employee names who were *only promoted & never demoted*.<br />
+  
+#### Table Schema, Sample Input, and output
+
+  `Employee_tbl` **Table**
+  
+  | Column Name    | Type     |
+  | :------------  |:---------|
+  | emp_name       | VARCHAR  |
+  | promotion_date | DATE     |
+  | position       | VARCHAR  |
+
+  `Designation_tbl` **Table**
+  
+  | Column Name    | Type     |
+  | :------------  |:---------|
+  | designation_order | SMALLINT |
+  | designation       | VARCHAR  |
+  
+  **Table Creation:**
+
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Employee_tbl(
+	emp_name VARCHAR(20),
+	promotion_date DATE,
+	position VARCHAR(20)
+  );
+  
+  INSERT INTO NamasteSQL.Employee_tbl(emp_name, promotion_date, position) VALUES
+  ('A', '1999-10-10', 'Clerk'),
+  ('A', '1999-12-10', 'Agent'),
+  ('A', '2000-02-01', 'Clerk'),
+  ('B', '2000-01-01', 'Agent'),
+  ('B', '2000-02-02', 'Assistant Manager'),
+  ('B', '2000-05-15', 'Manager'),
+  ('C', '2000-05-01', 'Assistant Manager'),
+  ('C', '2000-05-06', 'Agent'),
+  ('D', '2000-02-01', 'Agent'),
+  ('D', '2000-05-10', 'Assistant Manager'),
+  ('D', '2000-06-15', 'Head Manager');
+  
+  CREATE TABLE NamasteSQL.Designaton_tbl(
+	designation_order SMALLINT,
+	designation VARCHAR(20)
+  );
+  
+  INSERT INTO NamasteSQL.Designaton_tbl(designation_order, designation) VALUES
+  (1, 'Clerk'),
+  (2, 'Agent'),
+  (3, 'Assistant Manager'),
+  (4, 'Manager'),
+  (5, 'Head Manager');
+  ```
+
+  **Sample Input:**
+  `Employee_tbl`
+  
+  | emp_name | promotion_date | position |
+  | :---     | :---           | :---     |
+  | A | 1999-10-10 | Clerk |
+  | A | 1999-12-10 | Agent |
+  | A | 2000-02-01 | Clerk |
+  | B | 2000-01-01 | Agent |
+  | B | 2000-02-02 | Assistant Manager |
+  | B | 2000-05-15 | Manager |
+  | C | 2000-05-01 | Assistant Manager |
+  | C | 2000-05-06 | Agent |
+  | D | 2000-02-01 | Agent |
+  | D | 2000-05-10 | Assistant Manager |
+  | D | 2000-06-15 | Head Manager |
+  
+  `Designaton_tbl`
+  | designation_order | designation |
+  | :---              | :---        |
+  | 1 | Clerk |
+  | 2 | Agent |
+  | 3 | Assistant Manager |
+  | 4 | Manager |
+  | 5 | Head Manager |
+
+  **Sample Output:**
+  | emp_name |
+  | :--- |
+  | B |
+  | D |
+
+  **Solution:**
+  ```sql
+  WITH emp_position AS (
+	SELECT 
+	   e.emp_name
+	  ,e.promotion_date
+	  ,e.position
+	  ,d.designation_order
+	  ,ROW_NUMBER() OVER(PARTITION BY e.emp_name ORDER BY e.promotion_date) AS pro_num
+	  ,ROW_NUMBER() OVER(PARTITION BY e.emp_name ORDER BY d.designation_order) AS pos_num
+	FROM NamasteSQL.Employee_tbl e
+	LEFT JOIN NamasteSQL.Designaton_tbl d
+	ON e.position = d.designation
+  )
+  SELECT DISTINCT emp_name
+  FROM emp_position
+  WHERE pro_num - pos_num = 0;
   ```
 </details>
