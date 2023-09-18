@@ -391,7 +391,7 @@
 
   ```sql
   -- DDL Script for Table creation & loading the data
-  CREATE TABLE NamasteSQL.Seats
+  CREATE TABLE NamasteSQL.Seats (
 	seat_no SMALLINT,
 	is_empty CHAR(1)
   );
@@ -408,8 +408,8 @@
   (9, 'Y'),
   (10, 'Y'),
   (11, 'Y'),
-  (12, 'N')
-  (13, 'Y')
+  (12, 'N'),
+  (13, 'Y'),
   (14, 'Y');
   ```
 
