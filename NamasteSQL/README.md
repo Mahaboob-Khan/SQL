@@ -525,6 +525,7 @@
   ```
 
   **Sample Input:**
+  
   `Employee_tbl`
   
   | emp_name | promotion_date | position |
