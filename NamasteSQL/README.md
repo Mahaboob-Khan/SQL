@@ -576,3 +576,85 @@
   WHERE pro_num - pos_num = 0;
   ```
 </details>
+<details>
+  <summary>Q7. Clean the Names table</summary>
+  
+#### Problem Statement:
+  Write a query to clean the input table - Names and provide the First name & Last name as shown in the sample output.<br />
+  
+#### Table Schema, Sample Input, and output
+
+  `Names` **Table**
+  
+  | Column Name | Type     |
+  | :--------   |:---------|
+  | name        | VARCHAR  |
+  
+  **Table Creation:**
+
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Names(
+    name VARCHAR(20)
+  );
+  
+  INSERT INTO NamasteSQL.Names VALUES
+  ('AsHiSh dEv'),
+  ('KuMar SinGh'),
+  ('JohN dOe'),
+  ('VaibHAVi IYER'),
+  ('kiRAn RaO');
+  ```
+
+  **Sample Input:** 
+  
+  `Names`  
+  | name |
+  | :--- |
+  | AsHiSh dEv |
+  | KuMar SinGh |
+  | JohN dOe |
+  | VaibHAVi IYER |
+  | kiRAn RaO |
+
+  **Sample Output:**
+  | first_name | last_name |
+  | :---       | :---      |
+  | Ashish | Dev |
+  | Kumar | Singh |
+  | John | Doe |
+  | Vaibhavi | Iyer |
+  | Kiran | Rao |
+
+  **Solution:**
+  `Approach1`
+  ```sql
+  -- Using PARSENAME, REPLACE, LOWER, UPPER, LEFT, RIGHT, and LEN
+  WITH cte_names AS (
+    SELECT
+       LOWER(PARSENAME(REPLACE(name,' ','.'),2)) AS fname
+      ,LOWER(PARSENAME(REPLACE(name,' ','.'),1)) AS lname
+    FROM NamasteSQL.Names
+  )
+
+  SELECT 
+     UPPER(LEFT(fname,1))+RIGHT(fname,LEN(fname)-1) AS first_name
+    ,UPPER(LEFT(lname,1))+RIGHT(lname,LEN(lname)-1) AS last_name
+  FROM cte_names;
+  ```
+  
+  `Approach2`
+  ```sql
+  -- Using CHARINDEX, SUBSTRING, LOWER, UPPER, and LEN
+  WITH cte_names AS (
+    SELECT
+       LOWER(SUBSTRING(name, 1, CHARINDEX(' ', name)-1)) AS fname
+      ,LOWER(SUBSTRING(name, CHARINDEX(' ', name)+1, LEN(name) - CHARINDEX(' ', name))) AS lname
+    FROM NamasteSQL.Names)
+
+  SELECT 
+     UPPER(SUBSTRING(fname,1,1))+SUBSTRING(fname,2,LEN(fname)-1) AS first_name
+    ,UPPER(SUBSTRING(lname,1,1))+SUBSTRING(lname,2,LEN(lname)-1) AS last_name
+  FROM cte_names;
+  ```
+</details>
