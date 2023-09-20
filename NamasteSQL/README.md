@@ -626,7 +626,7 @@
   | Vaibhavi | Iyer |
   | Kiran | Rao |
 
-  **Solution:**
+  **Solution:**<br />
   `Approach1`
   ```sql
   -- Using PARSENAME, REPLACE, LOWER, UPPER, LEFT, RIGHT, and LEN
@@ -656,5 +656,78 @@
      UPPER(SUBSTRING(fname,1,1))+SUBSTRING(fname,2,LEN(fname)-1) AS first_name
     ,UPPER(SUBSTRING(lname,1,1))+SUBSTRING(lname,2,LEN(lname)-1) AS last_name
   FROM cte_names;
+  ```
+</details>
+<details>
+  <summary>Q8. Get Manager's Manager name of Employees</summary>
+  
+#### Problem Statement:
+  Write a query to get the the Manager's - N+1 names mapped from the table, also display only those records whose length of Employee names is greater than or
+  equal to their N+2 names.<br />
+  
+  Refer below mapping:<br />
+	- Employee -> Manager = N+1
+	- Employee -> Manager's -> Manager = N+2
+	 
+#### Table Schema, Sample Input, and output
+
+  `Employee_mapping` **Table**
+  
+  | Column Name | Type     |
+  | :--------   |:---------|
+  | id          | SMALLINT |
+  | emp_name    | VARCHAR  |
+  | manager_id  | SMALLINT |
+  
+  **Table Creation:**
+
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Employee_mapping(
+    id smallint,
+    emp_name VARCHAR(20),
+    manager_id smallint
+  );
+  
+  INSERT INTO NamasteSQL.Employee_mapping VALUES
+  (1, 'ajay', 3),
+  (2, 'shalini', 1),
+  (3, 'vikas', 2),
+  (4, 'akshay', 5),
+  (5, 'pooja', 6),
+  (6, 'ritvik', 4);
+  ```
+
+  **Sample Input:** <br />  
+  `Employee_mapping`  
+  | id   | emp_name | manager_id |
+  | :--- | :---     | :---       |
+  | 1 | ajay | 3 |
+  | 2 | shalini | 1 |
+  | 3 | vikas | 2 |
+  | 4 | akshay | 5 |
+  | 5 | pooja | 6 |
+  | 6 | ritvik | 4 |
+
+  **Sample Output:**
+  | emp_name | managers_manager |
+  | :---     | :---    |
+  | shalini  |	vikas  |
+  | vikas	 |  ajay   |
+  | akshay   |	ritvik |
+  | ritvik   |	pooja  |
+
+  **Solution:**
+  ```sql
+  -- Using JOIN to get Manager's Manager name of an employee
+  SELECT
+     e.emp_name
+    ,m2.emp_name AS managers_manager
+  FROM NamasteSQL.Employee_mapping e
+  LEFT JOIN NamasteSQL.Employee_mapping m
+    ON e.manager_id = m.id
+  LEFT JOIN NamasteSQL.Employee_mapping m2
+    ON m.manager_id = m2.id
+  WHERE LEN(e.emp_name) >= LEN(m2.emp_name);
   ```
 </details>
