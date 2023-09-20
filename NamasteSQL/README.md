@@ -665,9 +665,9 @@
   Write a query to get the the Manager's - N+1 names mapped from the table, also display only those records whose length of Employee names is greater than or
   equal to their N+2 names.<br />
   
-  Refer below mapping:<br />
-	- Employee -> Manager = N+1
-	- Employee -> Manager's -> Manager = N+2
+  `Refer below mapping:` <br />
+  - Employee -> Manager = N+1
+  - Employee -> Manager's -> Manager = N+2
 	 
 #### Table Schema, Sample Input, and output
 
