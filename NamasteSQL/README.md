@@ -731,3 +731,103 @@
   WHERE LEN(e.emp_name) >= LEN(m2.emp_name);
   ```
 </details>
+<details>
+  <summary>Q9. No of New & Repeated Customers on each Order Date</summary>
+  
+#### Problem Statement:
+  Write a query to find the total customers, new customers, and repeted customers for each order date.<br />
+	 
+#### Table Schema, Sample Input, and output
+
+  `Orders` **Table** <br />  
+  | Column Name  | Type          |
+  | :--------    |:---------     |
+  | order_id     | INT, IDENTITY |
+  | customer_id  | INT           |
+  | order_date   | DATE          |
+  | order_amount | INT           |
+  
+  **Table Creation:** <br />
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Orders(
+	order_id INT IDENTITY(1,1),
+	customer_id INT,
+	order_date DATE,
+	order_amount INT
+  );
+  
+  INSERT INTO NamasteSQL.Orders(customer_id, order_date, order_amount) VALUES
+  (100, '2022-01-01', 2000),
+  (200, '2022-01-01', 2500),
+  (300, '2022-01-01', 2100),
+  (100, '2022-01-02', 2000),
+  (400, '2022-01-02', 2200),
+  (500, '2022-01-02', 2700),
+  (100, '2022-01-03', 3000),
+  (400, '2022-01-03', 1000),
+  (600, '2022-01-03', 3000);
+  ```
+
+  **Sample Input:** <br />  
+  `Orders`  
+  | order_id   | customer_id | order_date | order_amount |
+  | :---       | :---        | :---       | :---         |
+  | 1 | 100 | 2022-01-01 | 2000 |
+  | 2 | 200 | 2022-01-01 | 2500 |
+  | 3 | 300 | 2022-01-01 | 2100 |
+  | 4 | 100 | 2022-01-02 | 2000 |
+  | 5 | 400 | 2022-01-02 | 2200 |
+  | 6 | 500 | 2022-01-02 | 2700 |
+  | 7 | 100 | 2022-01-03 | 3000 |
+  | 8 | 400 | 2022-01-03 | 1000 |
+  | 9 | 600 | 2022-01-03 | 3000 |
+
+  **Sample Output:**
+  | order_date | total_customers | new_customers | repeated_customers |
+  | :---       | :---            | :---          | :---               |
+  | 2022-01-01 | 3 | 3 | 0 |
+  | 2022-01-02 | 3 | 2 | 1 |
+  | 2022-01-03 | 3 | 1 | 2 |
+
+  **Solution:** <br />
+  `Method 1`
+  ```sql
+  -- Using JOIN & GROUP BY
+  WITH first_order AS (
+    SELECT
+       customer_id
+	  ,MIN(order_date) AS first_order_date
+    FROM NamasteSQL.Orders
+    GROUP BY customer_id
+  )
+  SELECT
+    o.order_date
+    ,COUNT(o.customer_id) AS total_customers
+    ,SUM( CASE WHEN o.order_date = f.first_order_date THEN 1 ELSE 0 END ) AS new_customers
+    ,SUM( CASE WHEN o.order_date > f.first_order_date THEN 1 ELSE 0 END ) AS repeated_customers
+  FROM NamasteSQL.Orders o
+  LEFT JOIN first_order f
+  ON o.customer_id = f.customer_id
+  GROUP BY o.order_date;
+  ```
+  
+  `Method 2`
+  ```sql
+  -- Using ROW_NUMBER() & GROUP BY
+  WITH order_entry AS (
+    SELECT
+       customer_id
+      ,order_date
+      ,ROW_NUMBER() OVER(PARTITION BY customer_id ORDER BY order_date) AS order_no
+    FROM NamasteSQL.Orders
+  )
+  SELECT
+     order_date
+    ,COUNT( customer_id ) AS total_customers
+    ,SUM( CASE WHEN order_no = 1 THEN 1 ELSE 0 END ) AS new_customers
+    ,SUM( CASE WHEN order_no > 1 THEN 1 ELSE 0 END ) AS repeated_customers
+  FROM order_entry
+  GROUP BY order_date;
+  ```
+</details>
