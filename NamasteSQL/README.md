@@ -907,7 +907,7 @@
   WHERE LOWER(email_id) LIKE '%gmail.com';
   ```
   
-  `Optional`
+  `Optional`<br />
   *If the requirement is to find the data across each email domain, then we may use below query.*<br />
   ```sql
   SELECT
@@ -918,5 +918,92 @@
     ,DATEDIFF(day, MIN(signup_date), MAX(signup_date)) AS diff_in_days
   FROM NamasteSQL.email_signup
   GROUP BY RIGHT(email_id, LEN(email_id) - CHARINDEX('@',email_id));
+  ```
+</details>
+<details>
+  <summary>Q11. Total Salary in each department</summary>
+  
+#### Problem Statement:
+  Write a query to print *The total salary for each department*.<br />
+	 
+#### Table Schema, Sample Input, and output
+
+  `Dept_tbl` **Table** <br />  
+  | Column Name | Type    |
+  | :--------   |:------- |
+  | id_deptname | VARCHAR |
+  | emp_name    | VARCHAR |
+  | salary      | INT     |
+  
+  **Table Creation:** <br />
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Dept_tbl(
+	id_deptname VARCHAR(20),
+	emp_name VARCHAR(25),
+	salary INT
+  );
+
+  INSERT INTO NamasteSQL.Dept_tbl(id_deptname, emp_name, salary) VALUES
+  ('1111-MATH', 'RAHUL', 10000),
+  ('1111-MATH', 'RAKESH', 20000),
+  ('2222-SCIENCE', 'AKASH', 10000),
+  ('222-SCIENCE', 'ANDREW', 10000),
+  ('22-CHEM', 'ANKIT', 25000),
+  ('3333-CHEM', 'SONIKA', 12000),
+  ('4444-BIO', 'HITESH', 2300),
+  ('44-BIO', 'AKSHAY', 10000);
+  ```
+
+  **Sample Input:** <br />  
+  `Dept_tbl`  
+  | id_deptname | emp_name | salary |
+  | :---        | :---     | :---   |
+  | 1111-MATH | RAHUL | 10000 |
+  | 1111-MATH | RAKESH | 20000 |
+  | 2222-SCIENCE | AKASH | 10000 |
+  | 222-SCIENCE | ANDREW | 10000 |
+  | 22-CHEM | ANKIT | 25000 |
+  | 3333-CHEM | SONIKA | 12000 |
+  | 4444-BIO | HITESH | 2300 |
+  | 44-BIO | AKSHAY | 10000 |
+
+  **Sample Output:**
+  | dept_name | total_salary |
+  | :---      | :---         |
+  | BIO |	12300 |
+  | CHEM | 37000 |
+  | MATH | 30000 |
+  | SCIENCE | 20000 |
+
+  **Solution:**<br />
+  `Method 1`
+  ```sql
+  -- Using SUBSTRING, CHARINDEX, LEN, GROUP BY
+  SELECT 
+     SUBSTRING(id_deptname, CHARINDEX('-', id_deptname)+1, LEN(id_deptname) - CHARINDEX('-', id_deptname)) AS dept_name
+    ,SUM(salary) AS total_salary
+  FROM NamasteSQL.Dept_tbl
+  GROUP BY SUBSTRING(id_deptname, CHARINDEX('-', id_deptname)+1, LEN(id_deptname) - CHARINDEX('-', id_deptname));
+  ```
+  
+  `Method 2`
+  ```sql
+  -- Using RIGHT, CHARINDEX, LEN, GROUP BY
+  SELECT 
+     RIGHT(id_deptname, LEN(id_deptname) - CHARINDEX('-', id_deptname)) AS dept_name
+    ,SUM(salary) AS total_salary
+  FROM NamasteSQL.Dept_tbl
+  GROUP BY RIGHT(id_deptname, LEN(id_deptname) - CHARINDEX('-', id_deptname));
+  ```
+  
+  `Method 3`
+  ```sql
+  -- Using PARSENAME, REPLACE, GROUP BY
+  SELECT 
+     PARSENAME(REPLACE(id_deptname, '-', '.'),1) AS dept_name
+    ,SUM(salary) AS total_salary
+  FROM NamasteSQL.Dept_tbl
+  GROUP BY PARSENAME(REPLACE(id_deptname, '-', '.'),1);  
   ```
 </details>
