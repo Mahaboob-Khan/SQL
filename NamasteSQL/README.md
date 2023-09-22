@@ -955,7 +955,7 @@
   ('44-BIO', 'AKSHAY', 10000);
   ```
 
-  **Sample Input:** <br />  
+  **Sample Input:**  
   `Dept_tbl`  
   | id_deptname | emp_name | salary |
   | :---        | :---     | :---   |
