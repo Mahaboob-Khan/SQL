@@ -831,3 +831,66 @@
   GROUP BY order_date;
   ```
 </details>
+<details>
+  <summary>Q10. No of GMAIL accounts, Signup dates, & difference between Signup dates</summary>
+  
+#### Problem Statement:
+  Write a query to find the *No of GMAIL accounts, Latest & First Signup date, difference between Latest & First Signup date*.<br />
+	 
+#### Table Schema, Sample Input, and output
+
+  `email_signup` **Table** <br />  
+  | Column Name | Type    |
+  | :--------   |:------- |
+  | id          | INT     |
+  | email_id    | VARCHAR |
+  | signup_date | DATE    |
+  
+  **Table Creation:** <br />
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.email_signup (
+	id INT,
+	email_id VARCHAR(100),
+	signup_date DATE
+  );
+
+  INSERT INTO NamasteSQL.email_signup(id, email_id, signup_date) VALUES
+  (1, 'Rajesh@Gmail.com', '2022-02-01'),
+  (2, 'Rakesh_gmail@rediffmail.com', '2023-01-22'),
+  (3, 'Hitest@Gmail.com', '2020-09-08'),
+  (4, 'Salil@Gmmail.com', '2019-07-05'),
+  (5, 'Himanshu@Yahoo.com', '2023-05-09'),
+  (6, 'Hitesh@Twitter.com', '2015-01-01'),
+  (7, 'Rakesh@facebook.com', null);
+  ```
+
+  **Sample Input:** <br />  
+  `email_signup`  
+  | id   | email_id | signup_date |
+  | :--- | :---     | :---        |
+  | 1 | Rajesh@Gmail.com | 2022-02-01 |
+  | 2 | Rakesh_gmail@rediffmail.com | 2023-01-22 |
+  | 3 | Hitest@Gmail.com | 2020-09-08 |
+  | 4 | Salil@Gmmail.com | 2019-07-05 |
+  | 5 | Himanshu@Yahoo.com | 2023-05-09 |
+  | 6 | Hitesh@Twitter.com | 2015-01-01 |
+  | 7 | Rakesh@facebook.com | null |
+
+  **Sample Output:**
+  | gmail_accounts | latest_signup_date | first_signup_date | diff_in_days |
+  | :---           | :---               | :---              | :---         |
+  | 2              | 2022-02-01         | 2020-09-08        | 511          |
+
+  **Solution:**
+  ```sql
+  -- Using CHARINDEX & SUBSTRING
+  SELECT
+     COUNT(id) AS gmail_accounts
+    ,MAX(signup_date) AS latest_signup_date
+    ,MIN(signup_date) AS first_signup_date
+    ,DATEDIFF(day, MIN(signup_date), MAX(signup_date)) AS diff_in_days
+  FROM NamasteSQL.email_signup
+  WHERE LOWER(SUBSTRING(email_id, CHARINDEX('@',email_id)+1,9)) = 'gmail.com';
+  ```
+</details>
