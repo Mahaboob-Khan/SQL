@@ -897,7 +897,7 @@
   
   `Method 2`
   ```sql
-  -- Using CHARINDEX & SUBSTRING
+  -- Using LOWER
   SELECT
      COUNT(id) AS gmail_accounts
     ,MAX(signup_date) AS latest_signup_date
@@ -905,5 +905,18 @@
     ,DATEDIFF(day, MIN(signup_date), MAX(signup_date)) AS diff_in_days
   FROM NamasteSQL.email_signup
   WHERE LOWER(email_id) LIKE '%gmail.com';
+  ```
+  
+  `Optional`
+  *If the requirement is to find the data across each email domain, then we may use below query.*<br />
+  ```sql
+  SELECT
+     RIGHT(email_id, LEN(email_id) - CHARINDEX('@',email_id)) AS email_domain
+    ,COUNT(id) AS email_accounts
+    ,MAX(signup_date) AS latest_signup_date
+    ,MIN(signup_date) AS first_signup_date
+    ,DATEDIFF(day, MIN(signup_date), MAX(signup_date)) AS diff_in_days
+  FROM NamasteSQL.email_signup
+  GROUP BY RIGHT(email_id, LEN(email_id) - CHARINDEX('@',email_id));
   ```
 </details>
