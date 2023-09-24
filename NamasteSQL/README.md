@@ -1006,4 +1006,98 @@
   FROM NamasteSQL.Dept_tbl
   GROUP BY PARSENAME(REPLACE(id_deptname, '-', '.'),1);  
   ```
+  
+  `Method 4`
+  ```sql
+  -- Using STRING_SPLIT, GROUP BY
+  SELECT 
+     value AS dept_name
+    ,SUM(salary) AS total_salary
+  FROM Dept_tbl 
+  CROSS APPLY STRING_SPLIT(id_deptname, '-', 1)
+  WHERE ordinal = 2
+  GROUP BY value;  
+  ```
+</details>
+<details>
+  <summary>Q12. Two consecutive window seats for both Gender, M & F.</summary>
+  
+#### Problem Statement:
+  Write a query to get *The two consecutive window seats for both Gender, "M" & "F", also assign Ranks from the Highest Seat no. to the Lowest Seat no*.<br />
+	 
+#### Table Schema, Sample Input, and output
+
+  `Seats_tbl` **Table** <br />  
+  | Column Name | Type     |
+  | :--------   |:-------  |
+  | gender      | CHAR     |
+  | window_seat | SMALLINT |
+  
+  **Table Creation:** <br />
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Seats_tbl(
+    gender CHAR(1),
+    window_seat SMALLINT
+  );
+  
+  INSERT into NamasteSQL.seats_tbl values
+  ('M', 1),
+  ('F', 2),
+  ('M', 3),
+  ('M', 4),
+  ('F', 5),
+  ('F', 6),
+  ('M', 7);
+  ```
+
+  **Sample Input:**  
+  `Seats_tbl`  
+  | gender | window_seat |
+  | :---   | :---        |
+  | M | 1 |
+  | F | 2 |
+  | M | 3 |
+  | M | 4 |
+  | F | 5 |
+  | F | 6 |
+  | M | 7 |
+
+  **Sample Output:**
+  | gender | window_seat | rnk  |
+  | :---   | :---        | :--- |
+  | M	| 3	| 2 |
+  | M	| 4	| 1 |
+  | F	| 5	| 2 |
+  | F	| 6	| 1 |
+
+  **Solution:**<br />
+  ```sql
+  -- Assign the ROW_NUMBER for each seat occupied PARTITION BY gender.
+  -- Calculate the difference between Seat_No & ROW_NUMBER
+  WITH window_seats AS (
+    SELECT
+      gender
+     ,window_seat
+     ,window_seat - ROW_NUMBER() OVER(PARTITION BY gender ORDER BY window_seat) AS diff
+    FROM NamasteSQL.Seats_tbl
+  ),
+  -- If the diff is same i.e window seats occupied consecutively
+  conseq_seats AS (
+    SELECT
+      gender
+     ,diff
+    FROM window_seats
+    GROUP BY gender, diff
+    HAVING COUNT(*) >= 2)
+  -- Join Window Seats with Consecutive Seats to identify the result
+  SELECT
+     w.gender
+    ,w.window_seat
+    ,ROW_NUMBER() OVER(PARTITION BY w.gender ORDER BY window_seat DESC) AS rnk
+  FROM window_seats w
+  INNER JOIN conseq_seats c
+     ON w.diff = c.diff AND w.gender = c.gender
+  ORDER BY w.window_seat;
+  ```
 </details>
