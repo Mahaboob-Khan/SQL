@@ -1158,6 +1158,7 @@
   | 2020-05-04 | -1 |
 
   **Solution:**
+  
   `Method 1`
   ```sql
   -- Using CTE for each fruit type and JOIN
