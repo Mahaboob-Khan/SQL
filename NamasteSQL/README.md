@@ -1157,8 +1157,7 @@
   | 2020-05-03 | 20 |
   | 2020-05-04 | -1 |
 
-  **Solution:**
-  
+  **Solution:**<br />  
   `Method 1`
   ```sql
   -- Using CTE for each fruit type and JOIN
@@ -1204,8 +1203,8 @@
   SELECT
      Sales_date
 	,SUM(CASE 
-			WHEN fruits = 'apples' THEN sold_num
-			WHEN fruits = 'oranges' THEN -sold_num
+		  WHEN fruits = 'apples' THEN sold_num
+		  WHEN fruits = 'oranges' THEN -sold_num
 		 END) AS diff
   FROM NamasteSQL.Sales_tbl
   GROUP BY sales_date
