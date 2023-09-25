@@ -1101,3 +1101,113 @@
   ORDER BY w.window_seat;
   ```
 </details>
+<details>
+  <summary>Q13. Difference of amount between apples & oranges for each day.</summary>
+  
+#### Problem Statement:
+  Write a query to get *The difference of amount between apples & oranges for each day*.<br />
+	 
+#### Table Schema, Sample Input, and output
+
+  `Sales_tbl` **Table** <br />  
+  | Column Name | Type     |
+  | :--------   |:-------  |
+  | sales_date  | DATE     |
+  | fruits      | VARCHAR  |
+  | sold_num    | SMALLINT |
+  
+  **Table Creation:** <br />
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Sales_tbl(
+	sales_date DATE,
+	fruits VARCHAR(25),
+	sold_num SMALLINT
+  );
+
+  INSERT INTO NamasteSQL.Sales_tbl(sales_date, fruits, sold_num) VALUES
+  ('2020-05-01', 'apples', 10),
+  ('2020-05-01', 'oranges', 8),
+  ('2020-05-02', 'apples', 15),
+  ('2020-05-02', 'oranges', 15),
+  ('2020-05-03', 'apples', 20),
+  ('2020-05-03', 'oranges', 0),
+  ('2020-05-04', 'apples', 15),
+  ('2020-05-04', 'oranges', 16);
+  ```
+
+  **Sample Input:**  
+  `Sales_tbl`  
+  | sales_date | fruits | sold_num |
+  | :---       | :---   | :---     |
+  | 2020-05-01 | apples | 10 |
+  | 2020-05-01 | oranges | 8 |
+  | 2020-05-02 | apples | 15 |
+  | 2020-05-02 | oranges | 15 |
+  | 2020-05-03 | apples | 20 |
+  | 2020-05-03 | oranges | 0 |
+  | 2020-05-04 | apples | 15 |
+  | 2020-05-04 | oranges | 16 |
+
+  **Sample Output:**
+  | sales_date | diff | 
+  | :---       | :--- |
+  | 2020-05-01 | 2 |
+  | 2020-05-02 | 0 |
+  | 2020-05-03 | 20 |
+  | 2020-05-04 | -1 |
+
+  **Solution:**
+  `Method 1`
+  ```sql
+  -- Using CTE for each fruit type and JOIN
+  WITH apple_sales AS (
+	SELECT sales_date, sold_num
+	  FROM NamasteSQL.Sales_tbl
+	 WHERE fruits = 'apples'
+  ),
+  orange_sales AS (
+	SELECT sales_date, sold_num
+	  FROM NamasteSQL.Sales_tbl
+	 WHERE fruits = 'oranges'
+  )
+  SELECT a.sales_date, a.sold_num - o.sold_num AS diff
+  FROM apple_sales a 
+  LEFT JOIN orange_sales o
+    ON a.sales_date = o.sales_date
+  ORDER BY a.sales_date;
+  ```
+  
+  `Method 2`
+  ```sql
+  -- Using CASE WHEN to generate the Fruit Sold_num as columns and
+  -- CTE, GROUP BY for difference calculation 
+  WITH fruit_Sales AS (
+    SELECT 
+	    sales_date
+	   ,CASE WHEN fruits = 'apples' THEN sold_num ELSE 0 END AS apple_sales
+	   ,CASE WHEN fruits = 'oranges' THEN sold_num ELSE 0 END AS orange_sales
+    FROM NamasteSQL.Sales_tbl
+  )
+  SELECT
+     sales_date
+	,SUM(apple_sales) - SUM(orange_sales) AS diff
+  FROM fruit_Sales
+  GROUP BY sales_date
+  ORDER BY sales_date;
+  ```
+  
+  `Method 3`
+  ```sql
+  -- Simple CASE WHEN & GROUP BY
+  SELECT
+     Sales_date
+	,SUM(CASE 
+			WHEN fruits = 'apples' THEN sold_num
+			WHEN fruits = 'oranges' THEN -sold_num
+		 END) AS diff
+  FROM NamasteSQL.Sales_tbl
+  GROUP BY sales_date
+  ORDER BY sales_date;  
+  ```
+</details>
