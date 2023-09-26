@@ -27,7 +27,8 @@
   ('potatochips3, hotchips3, balaji3', '60,70,80');
   ```
   
-  `Chips` **Example Input:**
+  **Sample Input:**
+  `Chips`
   
   | Chips    | Amt      |
   | :--- | :--- |
@@ -35,7 +36,7 @@
   | wafferrs2 | 40,50 |
   | potatochips3, hotchips3, balaji3 | 60,70,80 |
 
-  `Example` **Output:**
+  **Sample Output:**
   | Chips_List | Amt |
   | :--- | :--- |
   | lays1 | 10  |
@@ -108,9 +109,9 @@
   (3, '2020-10-11 22:15:14.000', '2020-10-11 22:18:28.000', 'Youtube');
   ```
 
-  `Platforms` **Example Input:**
-  
-  | user_id    | session_start      | session_end   | platforms        |
+  **Sample Input:**
+  `Platforms` 
+  | user_id    | session_start      | session_end   | platforms |
   | :--- | :--- | :---| :--- |
   | 0 | 2020-08-11 05:51:31.000 | 2020-08-11 05:54:45.000 | Twitch |
   | 0 | 2020-03-11 03:01:40.000 | 2020-03-11 03:01:59.000 | Twitch |
@@ -123,13 +124,15 @@
   | 3 | 2020-11-26 11:41:47.000 | 2020-11-26 11:52:01.000 | Twitch |
   | 3 | 2020-10-11 22:15:14.000 | 2020-10-11 22:18:28.000 | Youtube |
 
-  `Example` **Output:**
+  **Sample Output:**
   | user_id |
   | :--- |
   | 1 |
   | 3 |
 
-  **Approach 1**
+  
+  **Solution:**<br />
+  `Method 1`
   ```sql
   -- Approach 1 - Using GROUP BY, CTE & INNER JOIN
   WITH cte_users AS (
@@ -153,7 +156,7 @@
   ON u.user_id = d.user_id;
   ```
 
-  **Approach 2**
+  `Method 2`
   ```sql
   -- Approach 2 - Using DENSE_RANK() & INNER JOIN
   SELECT DISTINCT D.user_id
@@ -208,7 +211,8 @@
   (2, '2019-01-06', null);
   ```
 
-  `Log_tbl` **Example Input:**
+  **Sample Input:**
+  `Log_tbl`
   | id    | date      | flag   |
   | :--- | :--- | :--- |
   |1 | 2019-01-01 | null |
@@ -224,7 +228,7 @@
   |2 | 2019-01-05 | null |
   |2 | 2019-01-06 | null |
 
-  `Log_tbl` **Output:**
+  **Sample Output:**
   | id   | date | flag | running_num |
   | :--- | :--- | :--- | :--- |
   |1 | 2019-01-01 | null | 1 |
@@ -314,7 +318,8 @@
   (12, '500m', '2016', 'Thomas', 'Steven', 'Catherine');
   ```
 
-  `Players` **Example Input:**
+  **Sample Input:** <br />
+  `Players`
   
   | id    | event  | year  | gold  |  silver  |  bronze |
   | :---  | :---   | :---  | :---  | :---     | :---    |
@@ -331,7 +336,7 @@
   |11 | 200m | 2016 | jessica | Donald | Stefeney |
   |12 | 500m | 2016 | Thomas | Steven | Catherine |
 
-  `Example` **Output:**
+  **Sample Output:**
   | player | no_of_gold |
   | :---   | :---       |
   | Amthhew | 1 |
@@ -340,7 +345,8 @@
   | Ronald  | 1 |
   | Thomas  | 3 |
 
-  **Approach 1**
+  **Solution:**<br />
+  `Method 1`
   ```sql
   -- Using LEFT JOIN & GROUP BY
   SELECT g.gold AS name, COUNT(*) AS no_of_gold
@@ -353,7 +359,7 @@
   GROUP BY g.gold;
   ```
 
-  **Approach 2**
+  `Method 2`
   ```sql
   -- Using UNION ALL & CTE
   WITH silver_bronze_players AS (
@@ -413,7 +419,8 @@
   (14, 'Y');
   ```
 
-  `Seats` **Sample Input:**  
+  **Sample Input:** <br />
+  `Seats` 
   | seat_no | is_empty |
   | :---    | :---     |
   |1 | N |
@@ -1209,5 +1216,90 @@
   FROM NamasteSQL.Sales_tbl
   GROUP BY sales_date
   ORDER BY sales_date;  
+  ```
+</details>
+<details>
+  <summary>Q14. Green-Orange if Green exists for same id</summary>
+  
+#### Problem Statement:
+  Write a query to get *Green-Orange if Green exists for same ids if not then display the respective color if its only Green*.<br />
+	 
+#### Table Schema, Sample Input, and output
+
+  `Colors` **Table** <br />  
+  | Column Name | Type     |
+  | :--------   |:-------  |
+  | id          | SMALLINT |
+  | color       | VARCHAR  |
+  
+  **Table Creation:**
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Colors(
+    id SMALLINT,
+    color VARCHAR(20)
+  );
+
+  INSERT INTO NamasteSQL.Colors(id, color) VALUES
+  (1, 'Green'),
+  (1, 'Green-Orange'),
+  (2, 'Black'),
+  (3, 'Blue'),
+  (4, 'Red'),
+  (5, 'Green'),
+  (5, 'Green-Orange'),
+  (6, 'Green'),
+  (7, 'Green'),
+  (8, 'Green'),
+  (8, 'Green-Orange'),
+  (9, 'Green'),
+  (10, 'Green');
+  ```
+
+  **Sample Input:**  
+  `Colors`  
+  | id   | color    | 
+  | :--- | :---     |
+  | 1 | Green |
+  | 1 | Green-Orange |
+  | 2 | Black |
+  | 3 | Blue |
+  | 4 | Red |
+  | 5 | Green |
+  | 5 | Green-Orange |
+  | 6 | Green |
+  | 7 | Green |
+  | 8 | Green |
+  | 8 | Green-Orange |
+  | 9 | Green |
+  | 10 | Green |
+
+  **Sample Output:**
+  | id   | color |
+  | :--- | :---  |
+  | 1 | Green-Orange |
+  | 5 | Green-Orange |
+  | 6 | Green |
+  | 7 | Green |
+  | 8 | Green-Orange |
+  | 9 | Green |
+  | 10 | Green |
+
+  **Solution:**
+  ```sql
+  -- JOIN green color result set with green-orange and if the id matches,
+  -- get green-orange else green
+  SELECT gc.id, ISNULL(c.color, gc.color) AS color
+  FROM (
+	SELECT id, color
+	FROM NamasteSQL.Colors
+	WHERE LOWER(color) = 'green'
+  ) gc
+  LEFT JOIN (
+	SELECT id, color
+	FROM NamasteSQL.Colors
+	WHERE LOWER(color) = 'green-orange'
+  ) c
+  ON gc.id = c.id;
   ```
 </details>
