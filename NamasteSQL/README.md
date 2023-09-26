@@ -1303,3 +1303,66 @@
   ON gc.id = c.id;
   ```
 </details>
+<details>
+  <summary>Q15. No of Employees reporting to each manager & average age of reporting employees</summary>
+  
+#### Problem Statement:
+  Write a query to report *The ids and the names of all managers, the no of employees who report directly to them, <br />
+  and the average age of the reports rounded to the nearest integer*.<br />
+	 
+#### Table Schema, Sample Input, and output
+
+  `Reportee_tbl` **Table** <br />  
+  | Column Name | Type     |
+  | :--------   |:-------  |
+  | emp_id      | INT      |
+  | emp_name    | VARCHAR  |
+  | reports_to  | INT      |
+  | age         | TINYINT  |
+  
+  **Table Creation:**
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Reportee_tbl(
+	emp_id INT,
+	emp_name VARCHAR(30),
+	reports_to INT,
+	age TINYINT
+  );
+
+  INSERT INTO NamasteSQL.Reportee_tbl(emp_id, emp_name, reports_to, age) VALUES
+  (9, 'Henry', null, 43),
+  (6, 'Alice', 9, 41),
+  (4, 'Bob', 9, 36),
+  (2, 'Winston', null, 37);
+  ```
+
+  **Sample Input:**  
+  `Reportee_tbl`  
+  | emp_id | emp_name | reports_to | age  |
+  | :---   | :---     | :---       | :--- |
+  | 9 | Henry | null | 43 |
+  | 6 | Alice | 9 | 41 |
+  | 4 | Bob | 9 | 36 |
+  | 2 | Winston | null | 37 |
+
+  **Sample Output:**
+  | emp_id | emp_name | reportee_Count | avg_age |
+  | :---   | :---     | :---           | :---    | 
+  | 9	   | Henry    |	2              | 39      |
+
+  **Solution:**
+  ```sql
+  -- SELF JOIN the table on Manager_Id = Employee_Id and 
+  -- find the no of reportees & average age
+  SELECT
+     r.emp_id
+    ,r.emp_name
+    ,COUNT(m.emp_id) AS reportee_Count
+    ,CAST(ROUND(AVG(1.0*m.age),0) AS INT) AS avg_age
+  FROM NamasteSQL.Reportee_tbl r
+  INNER JOIN NamasteSQL.Reportee_tbl m
+  ON m.reports_to=r.emp_id
+  GROUP BY r.emp_id, r.emp_name;
+  ```
+</details>
