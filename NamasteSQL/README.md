@@ -1212,7 +1212,8 @@
 	,SUM(CASE 
 		  WHEN fruits = 'apples' THEN sold_num
 		  WHEN fruits = 'oranges' THEN -sold_num
-		 END) AS diff
+		 END
+		) AS diff
   FROM NamasteSQL.Sales_tbl
   GROUP BY sales_date
   ORDER BY sales_date;  
@@ -1364,5 +1365,74 @@
   INNER JOIN NamasteSQL.Reportee_tbl m
   ON m.reports_to=r.emp_id
   GROUP BY r.emp_id, r.emp_name;
+  ```
+</details>
+<details>
+  <summary>Q16. No of Unique customers, total transactions, difference between first & last transaction time</summary>
+  
+#### Problem Statement:
+  Write a query to get the no of *unique names, no of transactions, and the difference between the first & last transaction occured on 02-01-2023.*
+	 
+#### Table Schema, Sample Input, and output
+
+  `Transaction_tbl` **Table** <br />  
+  | Column Name | Type     |
+  | :--------   |:-------  |
+  | name        | CHAR     |
+  | trans_id    | INT      |
+  | date_time   | DATETIME |
+  
+  **Table Creation:**
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Transaction_tbl (
+    name CHAR(1),
+    trans_id INT,
+    date_time DATETIME
+  );
+
+  INSERT INTO NamasteSQL.Transaction_tbl(name, trans_id, date_time) VALUES
+  ('D', 8888, '2023-01-01 08:22:13.053'),
+  ('A', 55, '2023-01-02 16:12:18.023'),
+  ('D', 22, '2023-01-03 14:02:13.053'),
+  ('R', 77, '2023-01-04 20:22:33.053'),
+  ('H', 33, '2023-01-02 19:30:10.015'),
+  ('H', 789, '2023-01-02 10:22:13.053'),
+  ('I', 654, '2023-01-03 00:12:13.023'),
+  ('P', 4489, '2023-01-04 00:22:15.013'),
+  ('A', 2145, '2023-01-02 15:22:13.053');
+  ```
+
+  **Sample Input:**  
+  `Transaction_tbl`  
+  | name | trans_id | date_time |
+  | :--- | :---     | :---      |
+  | D    | 8888     | 2023-01-01 08:22:13.053 |
+  | A    | 55       | 2023-01-02 16:12:18.023 |
+  | D    | 22       | 2023-01-03 14:02:13.053 |
+  | R    | 77       | 2023-01-04 20:22:33.053 |
+  | H    | 33       | 2023-01-02 19:30:10.017 |
+  | H    | 789      | 2023-01-02 10:22:13.053 |
+  | I    | 654      | 2023-01-03 00:12:13.023 |
+  | P    | 4489     | 2023-01-04 00:22:15.013 |
+  | A    | 2145     | 2023-01-02 15:22:13.053 |
+
+  **Sample Output:**
+  | unique_names | trans | diff_in_mins |
+  | :---         | :---  | :---         |
+  | 2 | 4 | 548  |
+
+  **Solution:**
+  ```sql
+  -- Applying COUNT DISTINCT in identifying the unique customers
+  --  COUNT in identifying the total transactions
+  --  MIN & MIX in identifying the first & last transaction time
+  --  DATEDIFF to calculate the difference between first & last transaction time
+  SELECT 
+     COUNT(DISTINCT name) AS unique_names
+    ,COUNT(trans_id) AS trans
+    ,DATEDIFF(MINUTE, MIN(date_time), MAX(date_time)) AS diff_in_mins
+  FROM NamasteSQL.Transaction_tbl
+  WHERE CAST(date_time AS DATE) = '2023-01-02';
   ```
 </details>
