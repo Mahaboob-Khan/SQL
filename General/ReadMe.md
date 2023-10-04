@@ -137,7 +137,7 @@
   **Sample Output:**
   
   | dep_id | max_salary_emp | min_salary_emp |
-  | :--- | :--- | :--- | :--- | 
+  | :--- | :--- | :--- |
   | 1 | Marlania | Jamacia |
   | 2 | Lakken | Kimberli |
   | 3 | Tarvares | Shaquria |
