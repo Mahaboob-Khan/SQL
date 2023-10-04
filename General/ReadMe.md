@@ -114,6 +114,7 @@
   ```
 
   **Sample Input:**
+  
   `Employee`
   
   | emp_id | emp_name | salary | dep_id |
@@ -133,7 +134,8 @@
   | 1013 | Medusa | 72551 | 4 |
   | 1014 | Kubra | 55170 | 4 |
 
-  **Sample Output:** 
+  **Sample Output:**
+  
   | dep_id | max_salary_emp | min_salary_emp |
   | :--- | :--- | :--- | :--- | 
   | 1 | Marlania | Jamacia |
