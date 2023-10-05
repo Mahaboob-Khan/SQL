@@ -1436,3 +1436,70 @@
   WHERE CAST(date_time AS DATE) = '2023-01-02';
   ```
 </details>
+<details>
+  <summary>Q17. Generate Transaction Summary Report</summary>
+  
+#### Problem Statement:
+  Write a query to *Generate the transaction summary report as shown in the sample output.*
+	 
+#### Table Schema, Sample Input, and output
+
+  `Transactions_tbl` **Table** <br />  
+  | Column Name | Type     |
+  | :--------   |:-------  |
+  | id          | INT      |
+  | country     | CHAR     |
+  | state       | VARCHAR  |
+  | amount      | INT      |
+  | trans_date  | DATE     |
+  
+  **Table Creation:**
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE NamasteSQL.Transactions_tbl(
+	id INT,
+	country CHAR(2),
+	state VARCHAR(15),
+	amount INT,
+	trans_date DATE
+  );
+
+  INSERT INTO NamasteSQL.Transactions_tbl(id, country, state, amount, trans_date) VALUES
+  (121, 'US', 'approved', 1000, CAST('2018-12-18' AS DATE)),
+  (122, 'US', 'declined', 2000, CAST('2018-12-19' AS DATE)),
+  (123, 'US', 'approved', 2000, CAST('2019-01-01' AS DATE)),
+  (124, 'DE', 'approved', 2000, CAST('2019-01-07' AS DATE));
+  ```
+
+  **Sample Input:**  
+  `Transactions_tbl`  
+  | id   | country | state | amount | trans_date |
+  | :--- | :---    | :---  | :---   | :---       |
+  | 121 | US | approved | 1000 | 2018-12-18 | 
+  | 122 | US | declined | 2000 | 2018-12-19 | 
+  | 123 | US | approved | 2000 | 2019-01-01 | 
+  | 124 | DE | approved | 2000 | 2019-01-07 | 
+
+  **Sample Output:**
+| year_month | country | trans_count | approved_count | declined_count | trans_total_amount | approved_total_amount |
+| :---       | :---    | :---        | :---           | :---           | :---               | :---                  |
+| 2018-12    | US | 2 | 1 | 1 | 3000 | 1000 |
+| 2019-01    | US | 1 | 1 | 0 | 2000 | 2000 |
+| 2019-01    | DE | 1 | 1 | 0 | 2000 | 2000 |
+
+  **Solution:**
+  ```sql
+  -- Using GROUP BY, CASE WHEN along with SUM aggregation
+  SELECT
+     FORMAT(trans_date, 'yyyy-MM') AS year_month
+    ,country
+    ,COUNT(Id) AS trans_count
+    ,SUM(CASE WHEN LOWER(state)='approved' THEN 1 ELSE 0 END) AS approved_count
+    ,SUM(CASE WHEN LOWER(state)='declined' THEN 1 ELSE 0 END) AS declined_count
+    ,SUM(amount) AS trans_total_amount
+    ,SUM(CASE WHEN LOWER(state)='approved' THEN amount ELSE 0 END) AS approved_total_amount 
+  FROM NamasteSQL.transactions_tbl 
+  GROUP BY FORMAT(trans_date, 'yyyy-MM'), country
+  ORDER BY year_month, trans_total_amount DESC;
+  ```
+</details>
