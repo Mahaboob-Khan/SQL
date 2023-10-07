@@ -1481,11 +1481,11 @@
   | 124 | DE | approved | 2000 | 2019-01-07 | 
 
   **Sample Output:**
-| year_month | country | trans_count | approved_count | declined_count | trans_total_amount | approved_total_amount |
-| :---       | :---    | :---        | :---           | :---           | :---               | :---                  |
-| 2018-12    | US | 2 | 1 | 1 | 3000 | 1000 |
-| 2019-01    | US | 1 | 1 | 0 | 2000 | 2000 |
-| 2019-01    | DE | 1 | 1 | 0 | 2000 | 2000 |
+  | year_month | country | trans_count | approved_count | declined_count | trans_total_amount | approved_total_amount |
+  | :---       | :---    | :---        | :---           | :---           | :---               | :---                  |
+  | 2018-12    | US | 2 | 1 | 1 | 3000 | 1000 |
+  | 2019-01    | US | 1 | 1 | 0 | 2000 | 2000 |
+  | 2019-01    | DE | 1 | 1 | 0 | 2000 | 2000 |
 
   **Solution:**
   ```sql
@@ -1501,5 +1501,86 @@
   FROM NamasteSQL.transactions_tbl 
   GROUP BY FORMAT(trans_date, 'yyyy-MM'), country
   ORDER BY year_month, trans_total_amount DESC;
+  ```
+</details>
+<details>
+  <summary>Q18. No of different products sold on each day and their names</summary>
+  
+#### Problem Statement:
+  Write a query to *Find for each date the number od different products sold and their names.*
+	 
+#### Table Schema, Sample Input, and output
+
+  `Products` **Table** <br />  
+  | Column Name | Type     |
+  | :--------   |:-------  |
+  | sell_date   | DATE     |
+  | product     | VARCHAR  |
+  
+  **Table Creation:**
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE Products(
+	sell_date DATE,
+	product VARCHAR(25)
+  );
+
+  INSERT INTO Products(sell_date, product) VALUES
+  (CAST('2020-05-30' AS DATE), 'Headphones'),
+  (CAST('2020-06-01' AS DATE), 'Pencil'),
+  (CAST('2020-06-02' AS DATE), 'Mask'),
+  (CAST('2020-05-30' AS DATE), 'Basketball'),
+  (CAST('2020-06-01' AS DATE), 'Book'),
+  (CAST('2020-06-02' AS DATE), 'Mask'),
+  (CAST('2020-05-30' AS DATE), 'T-Shirt');
+  ```
+
+  **Sample Input:**  
+  `Products`  
+  | sell_date | product |
+  | :---      | :---    |
+  | 2020-05-30 | Headphones |
+  | 2020-06-01 | Pencil |
+  | 2020-06-02 | Mask |
+  | 2020-05-30 | Basketball |
+  | 2020-06-01 | Book |
+  | 2020-06-02 | Mask |
+  | 2020-05-30 | T-Shirt | 
+
+  **Sample Output:**
+  | sell_date | num_sold | product_list | 
+  | :---      | :---     | :---         |
+  | 2020-05-30 | 3 | Basketball, Headphones, T-Shirt |
+  | 2020-06-01 | 2 | Book, Pencil |
+  | 2020-06-02 | 1 | Mask |
+
+  **Solution:**
+  ```sql
+  -- Selected the list of unique products sold on each date as 
+  -- DISTINCT keyword is not supported on MS SQL
+  WITH uniq_prod AS (
+    SELECT DISTINCT 
+	   sell_date,
+	   product
+    FROM Products )
+  SELECT
+    sell_date,
+    COUNT(product) AS num_sold, 
+    STRING_AGG(product, ', ') WITHIN GROUP (ORDER BY product) AS product_list
+  FROM uniq_prod
+  GROUP BY sell_date
+  ORDER BY sell_date;
+  ```
+  
+  `Snowflake`
+  ```sql
+  -- Using LISTAGG
+  SELECT
+    sell_date,
+    COUNT( DISTINCT product) AS num_sold,
+    LISTAGG(DISTINCT product, ', ') WITHIN GROUP (ORDER BY product) AS product_list
+  FROM Products
+  GROUP BY sell_date
+  ORDER BY sell_date;
   ```
 </details>
