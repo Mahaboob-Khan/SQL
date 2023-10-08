@@ -212,9 +212,9 @@
   ```
   
   Where<br />
-    - @Today - Date from which we need to calculate the day
-	- @Nth - Which occurence need to be determined
-	- @Day - Weekday ( 1(Sunday) - 7(Saturday) because it's @@DATEFIRST is 7)
+  * @Today - Date from which we need to calculate the day
+  * @Nth - Which occurence need to be determined
+  * @Day - Weekday ( 1(Sunday) - 7(Saturday) because it's @@DATEFIRST is 7)
 	
   ```sql
   -- Below query can give you the first weekday configured in the system
@@ -229,7 +229,7 @@
   ```
   
   **Sample Output** <br />
-	- The SQL query was executed on 08-Oct-2023 and below is the output generated
+  * The SQL query was executed on 08-Oct-2023 and below is the output generated
 	
   | Today | Today_DoW_num | Today_DoW | Nth_DoW_Date | Nth_DoW |
   | :---  | :---          | :---      | :---         | :---    |
