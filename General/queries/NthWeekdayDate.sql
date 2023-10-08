@@ -1,3 +1,4 @@
+-- MS SQL
 DECLARE @Today DATE = GETDATE(), @Nth TINYINT = 3, @Day TINYINT = 6;
 SELECT
    @Today AS Today,
@@ -11,3 +12,11 @@ SELECT @@LANGUAGE AS [Language], @@DATEFIRST AS [DateFirst];
 
 -- It sets the first day of the week ( Default -> SET DATEFIRST 7; -> Sunday-Saturday as 1-7)
 SET DATEFIRST 7;
+
+-- Snowflake
+SET (Nth, Day) = (3, 'friday');
+SELECT
+  CURRENT_DATE() AS today,
+  DAYNAME(today) AS today_dow,
+  DATEADD(day, ($Nth - 1) * 7, NEXT_DAY(today, $Day)) AS Nth_dow_date,
+  DAYNAME(Nth_dow_date) AS Nth_dow;

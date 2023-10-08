@@ -200,7 +200,7 @@
   #### Problem Statement:
   Write a SQL query to find the Nth Weekday date from current date / any given date.<br />
   
-  `Solution`
+  `MS SQL Solution`
   ```sql
   DECLARE @Today DATE = GETDATE(), @Nth TINYINT = 3, @Day TINYINT = 6;
   SELECT
@@ -234,5 +234,19 @@
   | Today | Today_DoW_num | Today_DoW | Nth_DoW_Date | Nth_DoW |
   | :---  | :---          | :---      | :---         | :---    |
   | 2023-10-08 | 1 | Sunday | 2023-10-27 | Friday |
+
+  `Snowflake`
+  ```sql
+  SET (Nth, Day) = (3, 'friday');
+  SELECT
+    CURRENT_DATE() AS today,
+    DAYNAME(today) AS today_dow,
+    DATEADD(day, ($Nth - 1) * 7, NEXT_DAY(today, $Day)) AS Nth_dow_date,
+    DAYNAME(Nth_dow_date) AS Nth_dow;
+  ```
   
+  **Sample Output**
+  | TODAY | TDAY_DOW | NTH_DOW_DATE | NTH_DOW |
+  | :---  | :---     | :---         | :---    |
+  | 2023-10-08 | Sun | 2023-10-27   | Fri     |
 </details>
