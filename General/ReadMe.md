@@ -194,3 +194,44 @@
   FROM Employee;
   ```
 </details>
+<details>
+  <summary>Q3. Find the Nth Weekday date from given date</summary>
+
+  #### Problem Statement:
+  Write a SQL query to find the Nth Weekday date from current date / any given date.<br />
+  
+  `Solution`
+  ```sql
+  DECLARE @Today DATE = GETDATE(), @Nth TINYINT = 3, @Day TINYINT = 6;
+  SELECT
+    @Today AS Today,
+    DATEPART(dw, @Today) AS Today_DoW_num,
+    DATENAME(dw, @Today) AS Today_DoW,
+    DATEADD(dd, @Nth*7 - (7 + DATEPART(dw, @Today) - @Day) % 7, @Today) AS Nth_DoW_Date,
+    DATENAME( dw, DATEADD(dd, @Nth*7 - (7 + DATEPART(dw, @Today) - @Day) % 7, @Today) ) AS Nth_DoW;
+  ```
+  
+  Where
+	- @Nth - Which occurence need to be determined
+	- @Day - Weekday ( 1(Sunday) - 7(Saturday) because it's @@DATEFIRST is 7)
+	
+  Below query can give you the first weekday configured in the system and how to change the first weekday
+  ```sql
+  SELECT @@DATEFIRST;
+  
+  -- It sets the first day of the week ( Default, us_english is 7)
+  -- Where DATEFIRST 7 is Sunday [ 1 (Mon) - 7 (Sun) ]
+  SET DATEFIRST 7;
+  
+  -- If the DATEFIRST is set to 7, then below query returns 1
+  SELECT DATEPART(dw, any_sunday_date)
+  ```
+  
+  **Sample Output** <br />
+	- The SQL query was executed on 08-Oct-2023 and below is the output generated
+	
+  | Today | Today_DoW_num | Today_DoW | Nth_DoW_Date | Nth_DoW |
+  | :---  | :---          | :---      | :---         | :---    |
+  | 2023-10-08 | 1 | Sunday | 2023-10-27 | Friday |
+  
+</details>
