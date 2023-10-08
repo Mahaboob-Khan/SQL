@@ -211,12 +211,13 @@
     DATENAME( dw, DATEADD(dd, @Nth*7 - (7 + DATEPART(dw, @Today) - @Day) % 7, @Today) ) AS Nth_DoW;
   ```
   
-  Where
+  Where<br />
+    - @Today - Date from which we need to calculate the day
 	- @Nth - Which occurence need to be determined
 	- @Day - Weekday ( 1(Sunday) - 7(Saturday) because it's @@DATEFIRST is 7)
 	
-  Below query can give you the first weekday configured in the system and how to change the first weekday
   ```sql
+  -- Below query can give you the first weekday configured in the system
   SELECT @@DATEFIRST;
   
   -- It sets the first day of the week ( Default, us_english is 7)
