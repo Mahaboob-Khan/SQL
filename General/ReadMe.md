@@ -250,3 +250,140 @@
   | :---  | :---     | :---         | :---    |
   | 2023-10-08 | Sun | 2023-10-27   | Fri     |
 </details>
+<details>
+  <summary>Q4. Two or more consecutive empty seats in a Cinema hall</summary>
+
+  #### Problem Statement:
+  Write a SQL query to identify the *Two or more consecutive empty seats in a Cinema hall*.<br />
+  
+  #### Table Schema, Sample Input, and output
+
+  `Cinema` **Table**
+  
+  | Column Name   | Type     |
+  | :------------ |:---------|
+  | seat_id       | INT, AUTO INCREMENT |
+  | free	      | INT (1 or 0)  |
+
+  **Table Creation:**
+  
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE TABLE Cinema(
+	seat_id INT PRIMARY KEY,
+	free INT
+  );
+
+  INSERT INTO Cinema(seat_id, free) VALUES
+  (1, 1),
+  (2, 0),
+  (3, 1),
+  (4, 1),
+  (5, 1),
+  (6, 0),
+  (7, 1),
+  (8, 1),
+  (9, 0),
+  (10, 1),
+  (11, 0),
+  (12, 1),
+  (13, 0),
+  (14, 1),
+  (15, 1),
+  (16, 0),
+  (17, 1),
+  (18, 1),
+  (19, 1),
+  (20, 1);
+  ```
+
+  **Sample Input:**
+  
+  `Employee`
+  
+  | seat_id | free |
+  | :--- | :--- |
+  | 1 | 1 |
+  | 2 | 0 |
+  | 3 | 1 |
+  | 4 | 1 |
+  | 5 | 1 |
+  | 6 | 0 |
+  | 7 | 1 |
+  | 8 | 1 |
+  | 9 | 0 |
+  | 10 | 1 |
+  | 11 | 0 |
+  | 12 | 1 |
+  | 13 | 0 |
+  | 14 | 1 |
+  | 15 | 1 |
+  | 16 | 0 |
+  | 17 | 1 |
+  | 18 | 1 |
+  | 19 | 1 |
+  | 20 | 1 |
+
+  **Sample Output:**
+  
+  | seat_id | free |
+  | :--- | :--- |
+  | 3 | 1 |
+  | 4 | 1 |
+  | 5 | 1 |
+  | 7 | 1 |
+  | 8 | 1 |
+  | 14 | 1 |
+  | 15 | 1 |
+  | 17 | 1 |
+  | 18 | 1 |
+  | 19 | 1 |
+  | 20 | 1 |
+
+  **Solution:**
+  
+  `Method 1`
+  ```sql
+  -- Finding the difference of seats between empty seats
+  WITH empty_seats AS (
+      SELECT SEAT_ID, FREE, SEAT_ID - ROW_NUMBER() OVER(ORDER BY SEAT_ID) AS diff
+      FROM CINEMA
+      WHERE FREE = TRUE
+  ),
+  -- Finding the two or more consecutive empty seat groups
+  -- If there is a need to identify more than 2 consecutive empty seats, just update the HAVING clause filter value
+  conseq_empty_seats AS (
+      SELECT diff
+      FROM empty_seats
+      GROUP BY diff
+      HAVING COUNT(*) > 1
+  )
+  -- Final SELECT to find the two or more empty consecutive groups
+  SELECT e.SEAT_ID, e.FREE
+  FROM conseq_empty_seats c INNER JOIN empty_seats e
+  ON e.diff = c.diff;
+  ```
+  
+  `Method 2`
+  ```sql
+  -- Finding the Next or Previous empty seat using LEAD & LAG Window functions
+  WITH empty_seats AS (
+      SELECT SEAT_ID, FREE, LEAD(SEAT_ID) OVER(ORDER BY SEAT_ID) - SEAT_ID AS next_empty, SEAT_ID - LAG(SEAT_ID) OVER(ORDER BY SEAT_ID) AS prev_empty
+      FROM CINEMA
+      WHERE FREE = TRUE
+  )
+  SELECT SEAT_ID, FREE
+  FROM empty_seats
+  WHERE next_empty = 1 OR prev_empty = 1;
+  ```
+  
+  `Method 3`
+  ```sql
+  -- Snowflake - Finding the Next or Previous empty seat using LEAD & LAG Window functions & QULIFY
+  SELECT SEAT_ID, FREE
+  FROM CINEMA
+  WHERE FREE = TRUE
+  QUALIFY ( LEAD(SEAT_ID) OVER(ORDER BY SEAT_ID) - SEAT_ID = 1 ) OR ( SEAT_ID - LAG(SEAT_ID) OVER(ORDER BY SEAT_ID) = 1 )
+  ORDER BY SEAT_ID;
+  ```
+</details>
