@@ -387,3 +387,99 @@
   ORDER BY SEAT_ID;
   ```
 </details>
+<details>
+  <summary>Q5. Get the persons data organized into columns by their Professions</summary>
+
+  #### Problem Statement:
+  Write a SQL query to populate *persons data organized into columns by their Professions*.<br />
+  
+  #### Table Schema, Sample Input, and output
+
+  `PROFESSION_DATA` **Table**
+  
+  | Column Name   | Type     |
+  | :------------ |:---------|
+  | NAME          | VARCHAR |
+  | AGE	          | NUMBER  |
+  | PROFESSION    | VARCHAR |
+
+  **Table Creation:**
+  
+  ```sql
+  -- DDL Script for Table creation & loading the data
+  CREATE OR REPLACE TABLE PROFESSION_DATA (
+  	NAME VARCHAR,
+  	AGE NUMBER,
+  	PROFESSION VARCHAR
+  );
+
+  INSERT INTO PROFESSION_DATA (NAME, AGE, PROFESSION) VALUES
+  ('A',22,'ENG'),
+  ('B',21,'DOCTOR'),
+  ('C',29,'NURSE'),
+  ('D',22,'ENG');
+  ```
+
+  **Sample Input:**
+  
+  `PROFESSION_DATA`
+  
+  | NAME | AGE  | PROFESSION |
+  | :--- | :--- | :---       |
+  | A | 22 | ENG |
+  | B | 21 | DOCTOR |
+  | C | 29 | NURSE |
+  | D | 25 | ENG |
+
+  **Sample Output:**
+  
+  | ENG | DOCTOR | NURSE |
+  | :--- | :---  | :---  |
+  | A | B | C |
+  | D | null | null |
+
+  **Solution:**
+
+  `Using LEFT JOIN`
+  ```sql
+  -- Filter data by each profession into it's own CTE
+  WITH ENG_DATA AS (
+      SELECT
+          NAME AS ENG,
+          ROW_NUMBER() OVER(ORDER BY NAME) AS RN_ENG
+      FROM
+          PROFESSION_DATA
+      WHERE 
+          PROFESSION = 'ENG'
+  )
+  ,DOCTOR_DATA AS (
+      SELECT
+          NAME AS DOCTOR,
+          ROW_NUMBER() OVER(ORDER BY NAME) AS RN_DOCTOR
+      FROM
+          PROFESSION_DATA
+      WHERE 
+          PROFESSION = 'DOCTOR'
+  )
+  ,NURSE_DATA AS (
+      SELECT
+          NAME AS NURSE,
+          ROW_NUMBER() OVER(ORDER BY NAME) AS RN_NURSE
+      FROM
+          PROFESSION_DATA
+      WHERE 
+          PROFESSION = 'NURSE'
+  )
+  -- Combine the data of different professions data into single result set using LEFT JOIN
+  SELECT
+    E.ENG, D.DOCTOR, N.NURSE
+  FROM
+    ENG_DATA E
+  LEFT JOIN
+    DOCTOR_DATA D
+    ON E.RN_ENG = D.RN_DOCTOR
+  LEFT JOIN
+    NURSE_DATA N
+    ON E.RN_ENG = N.RN_NURSE;
+  ```
+</details>
